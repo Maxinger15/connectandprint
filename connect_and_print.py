@@ -6,7 +6,9 @@ import flask
 import time
 
 
-class AutoConnectAndPrintPlugin(octoprint.plugin.EventHandlerPlugin, octoprint.plugin.RestartNeedingPlugin):
+class AutoConnectAndPrintPlugin(octoprint.plugin.EventHandlerPlugin, 
+                                octoprint.plugin.RestartNeedingPlugin,
+                                octoprint.plugin.SoftwareupdatePlugin):
 
     def on_event(self, event, payload):
         if event == octoprint.events.Events.UPLOAD:
@@ -33,8 +35,27 @@ class AutoConnectAndPrintPlugin(octoprint.plugin.EventHandlerPlugin, octoprint.p
         else:
             self._logger.error("Printer connection timed out after 2 minutes.")
 
+    def get_update_information(self):
+        return dict(
+            auto_connect_and_print=dict(
+                displayName=self._plugin_name,
+                displayVersion=self._plugin_version,
+
+                # Version check: github repository
+                type="github_release",
+                user="Maxinger15",
+                repo="connectandprint",
+                current=self._plugin_version,
+
+                # Update method: pip
+                pip="https://raw.githubusercontent.com/Maxinger15/connectandprint/{target_version}/connect_and_print.py"
+            )
+        )
 
 __plugin_name__ = "Connect And Print"
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_version__ = "1.0.0"
 __plugin_implementation__ = AutoConnectAndPrintPlugin()
+__plugin_hooks__ = {
+    "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
+}
