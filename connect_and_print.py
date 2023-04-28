@@ -7,8 +7,7 @@ import time
 
 
 class AutoConnectAndPrintPlugin(octoprint.plugin.EventHandlerPlugin, 
-                                octoprint.plugin.RestartNeedingPlugin,
-                                octoprint.plugin.SoftwareupdatePlugin):
+                                octoprint.plugin.RestartNeedingPlugin):
 
     def on_event(self, event, payload):
         if event == octoprint.events.Events.UPLOAD:
