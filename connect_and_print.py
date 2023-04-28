@@ -5,24 +5,13 @@ import octoprint.plugin
 import flask
 import time
 
-class AutoConnectAndPrintPlugin(octoprint.plugin.AssetPlugin,
-                                octoprint.plugin.EventHandlerPlugin,
-                                octoprint.plugin.SimpleApiPlugin,
-                                octoprint.plugin.TemplatePlugin):
 
-    def get_assets(self):
-        return dict(
-            js=["js/connect_and_print.js"]
-        )
-
-    def get_template_configs(self):
-        return [
-            dict(type="settings", custom_bindings=True)
-        ]
+class AutoConnectAndPrintPlugin(octoprint.plugin.EventHandlerPlugin, octoprint.plugin.RestartNeedingPlugin):
 
     def on_event(self, event, payload):
         if event == octoprint.events.Events.UPLOAD:
-            self._logger.info("Uploaded file detected, connecting and printing...")
+            self._logger.info(
+                "Uploaded file detected, connecting and printing...")
             self._connect_and_print(payload["path"])
 
     def _connect_and_print(self, file_path):
@@ -43,6 +32,7 @@ class AutoConnectAndPrintPlugin(octoprint.plugin.AssetPlugin,
             printer.start_print()
         else:
             self._logger.error("Printer connection timed out after 2 minutes.")
+
 
 __plugin_name__ = "Connect And Print"
 __plugin_pythoncompat__ = ">=2.7,<4"
