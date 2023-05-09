@@ -11,9 +11,14 @@ class ConnectAndPrintPlugin(octoprint.plugin.EventHandlerPlugin,
 
     def on_event(self, event, payload):
         if event == octoprint.events.Events.UPLOAD:
-            self._logger.info(
-                "Uploaded file detected, connecting and printing...")
-            self._connect_and_print(payload["path"])
+            if(payload['print']):
+                self._logger.info(
+                    "Uploaded file to print detected, connecting and printing...")
+            
+                self._connect_and_print(payload["path"])
+            else:
+                self._logger.info(
+                    "Uploaded file detected, connecting and printing...")
 
     def _connect_and_print(self, file_path):
         printer = self._printer
