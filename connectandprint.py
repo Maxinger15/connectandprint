@@ -44,15 +44,10 @@ class ConnectAndPrintPlugin(octoprint.plugin.EventHandlerPlugin,
             connectandprint=dict(
                 displayName=self._plugin_name,
                 displayVersion=self._plugin_version,
-
-                # Version check: github repository
-                type="github_release",
-                user="Maxinger15",
-                repo="connectandprint",
-                current=self._plugin_version,
-
-                # Update method: pip
-                pip="https://raw.githubusercontent.com/Maxinger15/connectandprint/{target_version}/connectandprint.py"
+                type="httpheader",
+                header_name="ETag",
+                url="https://raw.githubusercontent.com/Maxinger15/connectandprint/master/connectandprint.py",
+                method="single_file_plugin"
             )
         )
 
