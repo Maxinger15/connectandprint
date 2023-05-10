@@ -6,8 +6,21 @@ import flask
 import time
 
 
-class ConnectAndPrintPlugin(octoprint.plugin.EventHandlerPlugin, 
+class ConnectAndPrintPlugin(octoprint.plugin.StartupPlugin,
+                            octoprint.plugin.EventHandlerPlugin, 
                                 octoprint.plugin.RestartNeedingPlugin):
+    def __init__(self):
+        self.psu_control_mode = False
+
+    def on_startup(self, host, port):
+        psucontrol_helpers = self._plugin_manager.get_helpers("psucontrol")
+        if not psucontrol_helpers or 'register_plugin' not in psucontrol_helpers.keys():
+            self._logger.debug("PSU-Control not available, skipping registration")
+            return
+
+        self._logger.debug("Registering plugin with PSUControl")
+        self.psu_control_mode = True
+        psucontrol_helpers['register_plugin'](self)
 
     def on_event(self, event, payload):
         if event == octoprint.events.Events.UPLOAD:
@@ -22,6 +35,13 @@ class ConnectAndPrintPlugin(octoprint.plugin.EventHandlerPlugin,
 
     def _connect_and_print(self, file_path):
         printer = self._printer
+
+        if self.psu_control_mode:
+            psu_on = self._plugin_manager.get_helpers("psucontrol")["get_psu_state"]()
+            self._logger.debug("PSU-Status: "+str(psu_on))
+            if not psu_on:
+                self._logger.debug("Trying to turn PSU on")
+                self._plugin_manager.get_helpers("psucontrol")["turn_psu_on"]()
 
         if not printer.is_operational():
             printer.connect()
