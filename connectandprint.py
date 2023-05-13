@@ -45,15 +45,15 @@ class ConnectAndPrintPlugin(octoprint.plugin.EventHandlerPlugin,
                 displayName=self._plugin_name,
                 displayVersion=self._plugin_version,
                 type="httpheader",
-                header_name="ETag",
-                url="https://raw.githubusercontent.com/Maxinger15/connectandprint/master/connectandprint.py",
+                header_name="Etag",
+                url="https://raw.githubusercontent.com/Maxinger15/connectandprint/automatic-update-fails/connectandprint.py",
                 method="single_file_plugin"
             )
         )
 
 __plugin_name__ = "Connect And Print"
 __plugin_pythoncompat__ = ">=2.7,<4"
-__plugin_version__ = "1.1.1"
+__plugin_version__ = "1.1.2"
 __plugin_description__='Automatically connect to your printer on file upload and start printing'
 __plugin_author__="Max Grallinger"
 __plugin_url__="https://github.com/Maxinger15/connectandprint"
